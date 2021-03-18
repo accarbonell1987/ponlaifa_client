@@ -1,0 +1,28 @@
+@import '../../../style/base';
+
+.cnt-general {
+  height: 100%;
+
+  .cnt-buttons {
+    @include box-shadow(0px 1px 4px greyScale(0.15));
+    background-color: $white;
+    border: 5px black;
+    height: 5.2vh;
+    padding: 10px 10px !important;
+
+    .ant-btn-primary {
+      background: $color-primary;
+      border-color: $color-primary !important;
+    }
+  }
+
+  .cnt-content {
+    height: 100%;
+    margin-top: 10px !important;
+  }
+}
+
+.anticon {
+  margin-top: 0 !important;
+  vertical-align: 0.14em !important;
+}
