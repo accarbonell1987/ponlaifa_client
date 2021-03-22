@@ -79,3 +79,19 @@ export const updateListVideo = async (id, listId, token) => {
     throw error;
   }
 };
+
+export const addVideo = async (name, data, token) => {
+  axios.defaults.headers.common['Content-Type'] = 'application/json';
+
+  const endpoint = `${url}/video/create`;
+
+  const user = {
+    username: username,
+    password: password,
+    email: email,
+    admin: admin
+  };
+
+  const data = await axios.post(endpoint, user);
+  return data;
+};
