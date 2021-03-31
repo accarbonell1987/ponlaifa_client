@@ -80,16 +80,11 @@ export const updateListVideo = async (id, listId, token) => {
   }
 };
 
-export const addVideo = async (name, video, token) => {
+export const addVideo = async (video, token) => {
   axios.defaults.headers.common['Content-Type'] = 'application/json';
 
   const endpoint = `${url}/video/add`;
 
-  const videoJSON = {
-    name: name,
-    video: video
-  };
-
-  const data = await axios.post(endpoint, videoJSON);
+  const data = await axios.post(endpoint, video);
   return data;
 };

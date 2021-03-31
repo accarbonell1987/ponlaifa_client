@@ -28,13 +28,12 @@ export const AddModal = (props) => {
 
   const onFinish = async () => {
     let formData = new FormData();
-
     formData.append('file', fileList[0].originFileObj);
 
-    const name = fileList[0].originFileObj.name;
+    // const name = fileList[0].originFileObj.name;
     const video = formData;
 
-    const responseData = await addVideo(name, video);
+    const responseData = await addVideo(video);
     const { statusCode, response, message } = responseData.data;
 
     if (statusCode === 400) ShowError(message);

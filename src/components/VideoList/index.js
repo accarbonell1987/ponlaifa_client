@@ -59,7 +59,6 @@ export const VideoList = (props) => {
   };
   const deleteVideoModal = (file) => {
     setDeleteId(file.uid);
-    console.log(file.uid);
     setDeleteModalVisible(true);
   };
 
