@@ -64,7 +64,7 @@ export const Main = () => {
 
   const getListItem = (item) => {
     const video = item.video;
-    const urlPoster = `${url}/video/poster/${video.name}`;
+    const urlPoster = `${url}/video/poster/?name=${video.name}`;
 
     const upload = {
       uid: video._id,
@@ -124,7 +124,7 @@ export const Main = () => {
         <Button type="primary" icon={<UnorderedListOutlined />} onClick={showDrawer}>
           {getMessage('LABEL_LISTS', null)}
         </Button>
-        <Drawer title={getMessage('LABEL_LISTS', null)} placement="right" onClick={onClose} onClose={onClose} visible={visible}>
+        <Drawer title={getMessage('LABEL_LISTS', null)} placement="right" onClose={onClose} visible={visible}>
           {getVideoLists()}
         </Drawer>
       </div>

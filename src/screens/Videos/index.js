@@ -43,7 +43,7 @@ export const Videos = () => {
             for (let i = 0; i < data.length; i++) {
               const video = data[i];
 
-              const urlPoster = `${url}/video/poster/${video.name}`;
+              const urlPoster = `${url}/video/poster/?name=${video.name}`;
               const upload = {
                 uid: video._id,
                 name: video.name,

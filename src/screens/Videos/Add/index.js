@@ -1,18 +1,21 @@
 import React, { useRef, useState } from 'react';
 
-import { Upload, Modal, Form, Button } from 'antd';
+import { Upload, Modal, Form, Button, Progress } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 
 import { getMessage } from '../../../utils/language';
 import { getDate } from '../../../utils/date';
 
-import { addVideo } from '../../../api/videoServices';
+// import { addVideo } from '../../../api/videoServices';
 import { ShowError, ShowSuccess } from '../../../components';
+
+import axios from 'axios';
 
 export const AddModal = (props) => {
   const [isModalVisible, setIsModalVisible] = props.modalState;
   const submitButtonRef = useRef();
   const [fileList, setFileList] = useState([]);
+  const [progress, setProgress] = useState(0);
 
   const handleOk = () => {
     submitButtonRef.current.click();
@@ -30,10 +33,25 @@ export const AddModal = (props) => {
     let formData = new FormData();
     formData.append('file', fileList[0].originFileObj);
 
-    // const name = fileList[0].originFileObj.name;
     const video = formData;
 
-    const responseData = await addVideo(video);
+    const url = `http://${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}/api`;
+    axios.defaults.headers.common['Content-Type'] = 'application/json';
+    const endpoint = `${url}/video/add`;
+
+    const config = {
+      headers: { 'content-type': 'multipart/form-data' },
+      onUploadProgress: (event) => {
+        const percent = Math.floor((event.loaded / event.total) * 100);
+        setProgress(percent);
+
+        if (percent === 100) {
+          setTimeout(() => setProgress(0), 1000);
+        }
+      }
+    };
+
+    const responseData = await axios.post(endpoint, video, config);
     const { statusCode, response, message } = responseData.data;
 
     if (statusCode === 400) ShowError(message);
@@ -47,7 +65,7 @@ export const AddModal = (props) => {
       };
       setData([...data, pVideo]);
 
-      ShowSuccess(getMessage('USER_CONFIRMATIONADDED', null));
+      ShowSuccess(getMessage('VIDEO_CONFIRMATIONADDED', null));
       setIsModalVisible(false);
     }
   };
@@ -66,7 +84,7 @@ export const AddModal = (props) => {
 
   return (
     <Modal
-      title={getMessage('USER_MODALADD_TITLE', null)}
+      title={getMessage('VIDEO_MODALADD_TITLE', null)}
       visible={isModalVisible}
       onOk={handleOk}
       onCancel={handleCancel}
@@ -84,6 +102,7 @@ export const AddModal = (props) => {
           >
             <Button icon={<UploadOutlined />}>{getMessage('VIDEO_UPLOAD', null)}</Button>
           </Upload>
+          {progress > 0 ? <Progress percent={progress} /> : null}
         </Form.Item>
         <Form.Item>
           <Button ref={submitButtonRef} type="hidden" htmlType="submit" style={{ display: 'none' }} />

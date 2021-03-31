@@ -83,7 +83,7 @@ export const RelationModal = (props) => {
 
   const getListItem = (item) => {
     const video = item.video;
-    const urlPoster = `${url}/video/poster/${video.name}`;
+    const urlPoster = `${url}/video/poster/?name=${video.name}`;
 
     const upload = {
       uid: video._id,
@@ -95,7 +95,7 @@ export const RelationModal = (props) => {
       <List.Item key={video._id}>
         <Checkbox name={video._id} defaultChecked={item.checked} onChange={handleCheckBoxChange}></Checkbox>
         <div className="align-to-list">
-          <VideoList file={upload} eventToResponse={null} selectedVideoToResponse={null} />
+          <VideoList file={upload} eventToResponse={[videos, setVideos]} selectedVideoToResponse={null} />
         </div>
       </List.Item>
     );

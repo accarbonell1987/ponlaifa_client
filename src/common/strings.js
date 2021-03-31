@@ -123,15 +123,19 @@ export const ES_LIST_CONFIRMATIONADDED = (data) => 'Listado de video adicionado 
 //! VIDEOS --------------------------------------------------------------------------------------------------
 
 //? EN - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+export const EN_VIDEO_MODALADD_TITLE = (data) => 'Add Video';
 export const EN_VIDEO_ERROR_LOADING = (data) => `Can not load videos...!`;
 export const EN_VIDEO_MODALDELETE_TITLE = (data) => 'Delete Video';
 export const EN_VIDEO_BUTTONDELETE = (data) => 'Delete';
 export const EN_VIDEO_QUESTIONDELETE = (data) => 'Are you sure you want to remove this video?';
 export const EN_VIDEO_UPLOAD = (data) => 'Upload Video';
+export const EN_VIDEO_CONFIRMATIONADDED = (data) => 'Video correctly added...';
 
 //? ES - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+export const ES_VIDEO_MODALADD_TITLE = (data) => 'Adicionar Video';
 export const ES_VIDEO_ERROR_LOADING = (data) => `No se pudieron cargar los videos...!`;
 export const ES_VIDEO_MODALDELETE_TITLE = (data) => 'Eliminar Video';
 export const ES_VIDEO_BUTTONDELETE = (data) => 'Eliminar';
 export const ES_VIDEO_QUESTIONDELETE = (data) => 'Esta seguro que desea eliminar este video?';
 export const ES_VIDEO_UPLOAD = (data) => 'Subir Video';
+export const ES_VIDEO_CONFIRMATIONADDED = (data) => 'Video adicionado correctamente...';
