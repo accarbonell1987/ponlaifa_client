@@ -9,11 +9,14 @@ import { ShowError, VideoList } from '../../components';
 import { getMessage } from '../../utils/language';
 import { getVideos } from '../../api/videoServices';
 
+import { AddModal } from './Add';
+
 import { url } from '../../api/videoServices';
 
 import './styles.scss';
 
 export const Videos = () => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [data, setData] = useState([]);
   const [uploadFiles, setUploadFiles] = useState();
 
@@ -39,6 +42,7 @@ export const Videos = () => {
 
             for (let i = 0; i < data.length; i++) {
               const video = data[i];
+
               const urlPoster = `${url}/video/poster/${video.name}`;
               const upload = {
                 uid: video._id,
@@ -52,8 +56,8 @@ export const Videos = () => {
             return fileList;
           };
 
-          setUploadFiles(UploadVideos);
           setData(videos);
+          setUploadFiles(UploadVideos);
         }
       }
     };
@@ -69,13 +73,17 @@ export const Videos = () => {
     }
   };
 
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
   return (
     <div className="cnt-general">
       <div className="cnt-buttons">
-        <Button type="primary" icon={<PlusOutlined />}>
+        <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
           {getMessage('BUTTONADD', null)}
         </Button>
-        {/* <AddModal modalState={[isModalVisible, setIsModalVisible]} useStateData={[data, setData]} /> */}
+        <AddModal modalState={[isModalVisible, setIsModalVisible]} useStateData={[data, setData]} />
       </div>
       <div className="cnt-content">{renderList()}</div>
     </div>

@@ -2,13 +2,17 @@ import React, { useState } from 'react';
 import { Upload, Modal } from 'antd';
 
 import { url, deleteVideo } from '../../api/videoServices';
+import { getMessage } from '../../utils/language';
 
-import { PlayerResponsive, DeleteButton } from '../../components';
+import { ShowError } from '../Alerts';
+
+import { PlayerResponsive } from '../../components';
 
 import './styles.scss';
 
 export const VideoList = (props) => {
   const { file, eventToResponse, selectedVideoToResponse } = props;
+  const name = 'VIDEO';
 
   const isComingFromMain = selectedVideoToResponse !== null;
 
@@ -17,6 +21,9 @@ export const VideoList = (props) => {
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [video, setVideo] = useState();
+
+  const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [deleteId, setDeleteId] = useState();
 
   const handlePreview = async (file) => {
     const urlVideo = `${url}/video/${file.name}`;
@@ -33,16 +40,32 @@ export const VideoList = (props) => {
     setIsModalVisible(false);
   };
 
-  const handleChange = async () => {
-    if (eventToResponse !== null) {
+  const handleOkDelete = async () => {
+    const responseData = await deleteVideo(deleteId);
+
+    const { statusCode, response, message } = responseData.data;
+    if (statusCode === 400) ShowError(message);
+    else {
       const [data, setData] = eventToResponse;
-      return <DeleteButton id={file.uid} eventToExecute={deleteVideo} name={'VIDEO'} eventToResponse={[data, setData]} />;
+
+      const newData = await Promise.all(data.filter((p) => p.key !== response._id));
+
+      setData(newData);
+      setDeleteModalVisible(false);
     }
+  };
+  const handleCancelDelete = () => {
+    setDeleteModalVisible(false);
+  };
+  const deleteVideoModal = (file) => {
+    setDeleteId(file.uid);
+    console.log(file.uid);
+    setDeleteModalVisible(true);
   };
 
   return (
     <div className="upload-list-inline">
-      <Upload listType="picture" fileList={[file]} onPreview={handlePreview} onChange={handleChange}></Upload>
+      <Upload listType="picture" fileList={[file]} onPreview={handlePreview} onRemove={deleteVideoModal} />
 
       <Modal
         destroyOnClose={true}
@@ -54,6 +77,17 @@ export const VideoList = (props) => {
         width={width}
       >
         {video ? <PlayerResponsive videoUrl={video.urlVideo} /> : <PlayerResponsive />}
+      </Modal>
+
+      <Modal
+        width={800}
+        title={getMessage(`${name}_MODALDELETE_TITLE`, null)}
+        visible={isDeleteModalVisible}
+        onOk={handleOkDelete}
+        onCancel={handleCancelDelete}
+        centered
+      >
+        {getMessage(`${name}_QUESTIONDELETE`, null)}
       </Modal>
     </div>
   );

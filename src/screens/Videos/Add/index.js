@@ -1,16 +1,18 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 
-import { Modal, Form, Input, Switch, Button } from 'antd';
+import { Upload, Modal, Form, Button } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
 
 import { getMessage } from '../../../utils/language';
 import { getDate } from '../../../utils/date';
 
-import { createUser } from '../../../api/userServices';
+import { addVideo } from '../../../api/videoServices';
 import { ShowError, ShowSuccess } from '../../../components';
 
 export const AddModal = (props) => {
   const [isModalVisible, setIsModalVisible] = props.modalState;
   const submitButtonRef = useRef();
+  const [fileList, setFileList] = useState([]);
 
   const handleOk = () => {
     submitButtonRef.current.click();
@@ -20,23 +22,31 @@ export const AddModal = (props) => {
     setIsModalVisible(false);
   };
 
-  const onFinish = async (values) => {
-    const { username, email, password, admin } = values;
-    // console.log(values);
+  const handleUploadChange = ({ fileList }) => {
+    setFileList(fileList);
+  };
 
-    const responseData = await createUser(username, password, email, admin);
+  const onFinish = async () => {
+    let formData = new FormData();
+
+    formData.append('file', fileList[0].originFileObj);
+
+    const name = fileList[0].originFileObj.name;
+    const video = formData;
+
+    const responseData = await addVideo(name, video);
     const { statusCode, response, message } = responseData.data;
 
     if (statusCode === 400) ShowError(message);
     else {
       const [data, setData] = props.useStateData;
 
-      const newUser = {
+      const pVideo = {
         key: response._id,
         ...response,
         createdAt: getDate(response.createdAt)
       };
-      setData([...data, newUser]);
+      setData([...data, pVideo]);
 
       ShowSuccess(getMessage('USER_CONFIRMATIONADDED', null));
       setIsModalVisible(false);
@@ -45,6 +55,14 @@ export const AddModal = (props) => {
 
   const onFinishFailed = (errorInfo) => {
     // console.log('Failed:', errorInfo);
+  };
+
+  const uploadProps = {
+    // onChange({ file, fileList }) {
+    //   if (file.status !== 'uploading') {
+    //     console.log(file, fileList);
+    //   }
+    // }
   };
 
   return (
@@ -56,63 +74,17 @@ export const AddModal = (props) => {
       centered
     >
       <Form name="basic" onFinish={onFinish} onFinishFailed={onFinishFailed} initialValues={{ admin: false }}>
-        <Form.Item
-          label={getMessage('USER_LABEL_USERNAME', null)}
-          name="username"
-          rules={[
-            {
-              required: true,
-              message: getMessage('USER_ERROR_USERNAME_MESSAGE', null)
-            }
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label={getMessage('USER_LABEL_EMAIL', null)}
-          name="email"
-          rules={[
-            {
-              type: 'email',
-              message: getMessage('USER_ERROR_INVALID_EMAIL_MESSAGE', null)
-            },
-            {
-              required: true,
-              message: getMessage('USER_ERROR_EMAIL_MESSAGE', null)
-            }
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label={getMessage('USER_LABEL_PASSWORD', null)}
-          name="password"
-          rules={[{ required: true, message: getMessage('USER_ERROR_PASSWORD_EMPTY', null) }]}
-        >
-          <Input.Password />
-        </Form.Item>
-        <Form.Item
-          label={getMessage('USER_LABEL_REPEATPASSWORD', null)}
-          name="repeatpassword"
-          dependencies={['password']}
-          hasFeedback
-          rules={[
-            { required: true, message: getMessage('USER_ERROR_CONFIRMPASSWORD_EMPTY', null) },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                if (!value || getFieldValue('password') === value) {
-                  return Promise.resolve();
-                }
-
-                return Promise.reject(new Error(getMessage('USER_ERROR_PASSWORD_NOTMATCH', null)));
-              }
-            })
-          ]}
-        >
-          <Input.Password />
-        </Form.Item>
-        <Form.Item name="admin" valuePropName="checked" label={getMessage('USER_LABEL_ISADMIN', null)}>
-          <Switch defaultChecked={false} />
+        <Form.Item>
+          <Upload
+            {...uploadProps}
+            onChange={handleUploadChange}
+            fileList={fileList}
+            beforeUpload={() => false}
+            maxCount={1}
+            listType="picture"
+          >
+            <Button icon={<UploadOutlined />}>{getMessage('VIDEO_UPLOAD', null)}</Button>
+          </Upload>
         </Form.Item>
         <Form.Item>
           <Button ref={submitButtonRef} type="hidden" htmlType="submit" style={{ display: 'none' }} />

@@ -30,7 +30,7 @@ export const getUnasignedVideos = async (token) => {
   }
 };
 
-export const getVideoPoster = async (id, token) => {
+export const getVideoPoster = async (name, token) => {
   try {
     axios.defaults.headers.common['Content-Type'] = 'application/json';
     axios.defaults.headers.common['access-token'] = token;
@@ -38,7 +38,7 @@ export const getVideoPoster = async (id, token) => {
     const endpoint = `${url}/video/poster`;
     const data = await axios.get(endpoint, {
       params: {
-        id: id
+        name: name
       }
     });
 
@@ -80,18 +80,16 @@ export const updateListVideo = async (id, listId, token) => {
   }
 };
 
-export const addVideo = async (name, data, token) => {
+export const addVideo = async (name, video, token) => {
   axios.defaults.headers.common['Content-Type'] = 'application/json';
 
-  const endpoint = `${url}/video/create`;
+  const endpoint = `${url}/video/add`;
 
-  const user = {
-    username: username,
-    password: password,
-    email: email,
-    admin: admin
+  const videoJSON = {
+    name: name,
+    video: video
   };
 
-  const data = await axios.post(endpoint, user);
+  const data = await axios.post(endpoint, videoJSON);
   return data;
 };
